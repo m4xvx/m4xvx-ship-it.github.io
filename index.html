@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mosin | Video Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- FAVICON (FIXES 404 ERROR) -->
+<link rel="icon" href="max.jpg" type="image/jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* === Base Styles === */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+body {
+  background: url('mosin.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+}
+body::before {
+  content:"";
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(11,6,20,0.7);
+  z-index: -1;
+}
+a { text-decoration: none; }
+
+/* === Navigation === */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(11,6,20,0.85);
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
+  z-index: 1000;
+}
+nav a {
+  color: #9f7aea;
+  margin: 0 20px;
+  font-weight: bold;
+  text-shadow: 0 0 6px #9f7aea;
+  transition: 0.3s;
+}
+nav a.active, nav a:hover {
+  color: #c4b5fd;
+  text-shadow: 0 0 12px #c4b5fd, 0 0 24px #9f7aea;
+}
+
+/* === Header === */
+header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 120px 20px;
+}
+header h1 {
+  color: #9f7aea;
+  font-size: 48px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 16px #9f7aea, 0 0 32px #c4b5fd;
+  animation: glowText 2s ease-in-out infinite alternate;
+}
+header h2 {
+  color: #c4b5fd;
+  margin-bottom: 15px;
+  text-shadow: 0 0 12px #c4b5fd, 0 0 24px #9f7aea;
+  animation: glowText 2s ease-in-out infinite alternate-reverse;
+}
+header p {
+  color: #ccc;
+  max-width: 800px;
+  text-shadow: 0 0 6px #9f7aea;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 2s ease forwards;
+  animation-delay: 1s;
+}
+
+/* === Animations === */
+@keyframes glowText {
+  0% { text-shadow: 0 0 8px #c4b5fd, 0 0 16px #9f7aea; }
+  100% { text-shadow: 0 0 16px #c4b5fd, 0 0 32px #9f7aea; }
+}
+@keyframes fadeUp { from {opacity:0; transform: translateY(30px);} to {opacity:1; transform: translateY(0);} }
+@keyframes floatImg { 0% {transform:translateY(0px);} 100% {transform:translateY(-10px);} }
+@keyframes floatSkill { 0%{transform:translateY(0);} 100%{transform:translateY(-6px);} }
+@keyframes floatText { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-5px) scale(1.05); } 100% { transform: translateY(0px) scale(1); } }
+@keyframes floatTextHover { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-8px) scale(1.1); } 100% { transform: translateY(0px) scale(1); } }
+@keyframes floatIframe { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+/* === Sections === */
+section {
+  padding: 70px 20px;
+  max-width: 1100px;
+  margin: auto;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+section.visible { opacity: 1; transform: translateY(0); }
+section h2 {
+  color: #c4b5fd;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 0 0 8px #c4b5fd, 0 0 16px #9f7aea;
+  animation: glowText 2s ease-in-out infinite alternate;
+}
+
+/* === About Me === */
+.about-card {
+  background: rgba(20,10,36,0.85);
+  padding: 30px;
+  border-radius: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  transition: transform 0.8s;
+}
+.about-card:hover { transform: scale(1.03); }
+.about-card img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid #9f7aea;
+  animation: floatImg 5s ease-in-out infinite alternate;
+}
+.about-card .about-text { max-width: 600px; }
+.about-card .about-text p { color: #ccc; margin-bottom: 10px; line-height: 1.6; animation: fadeUp 1s ease forwards; }
+.about-card .skills span {
+  display: inline-block;
+  background: #9f7aea;
+  color: #0b0614;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin: 5px 5px 0 0;
+  font-size: 14px;
+  animation: floatSkill 4s ease-in-out infinite alternate;
+  transition: transform 0.3s;
+}
+.about-card .skills span:hover { transform: scale(1.1); }
+
+/* === Portfolio / Video Edits === */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Smooth animation for video cards */
+.video-card {
+  background: rgba(20,10,36,0.85);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.video-card.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.video-card:hover {
+  transform: scale(1.05) rotate(1deg);
+  box-shadow: 0 10px 30px rgba(159, 122, 234, 0.5);
+}
+.video-card img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  transition: transform 0.8s;
+}
+.video-card .video-text {
+  margin-top: 10px;
+  line-height: 1.5;
+}
+.video-card .glow-text {
+  animation: floatText 3s ease-in-out infinite alternate;
+}
+
+/* Glowing text */
+.glow-text {
+  color: #c4b5fd;
+  text-shadow: 0 0 5px #c4b5fd, 0 0 10px #9f7aea, 0 0 20px #c4b5fd, 0 0 30px #9f7aea;
+  animation: glowPulse 2s ease-in-out infinite alternate;
+}
+@keyframes glowPulse {
+  0% { text-shadow: 0 0 3px #c4b5fd, 0 0 6px #9f7aea, 0 0 12px #c4b5fd; }
+  100% { text-shadow: 0 0 12px #c4b5fd, 0 0 24px #9f7aea, 0 0 36px #c4b5fd; }
+}
+.floating-text { display: inline-block; animation: floatText 3s ease-in-out infinite alternate; }
+
+/* === Featured Video === */
+.video-container {
+  max-width: 640px;
+  margin: 50px auto;
+  text-align: center;
+}
+.video-container iframe {
+  width: 100%;
+  height: 360px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px #9f7aea;
+  animation: floatIframe 4s ease-in-out infinite alternate;
+}
+.video-container .video-text {
+  margin-top: 15px;
+  line-height: 1.5;
+}
+
+/* === Footer === */
+footer {
+  background: rgba(11,6,20,0.85);
+  border-top: 1px solid #2a1b4d;
+  padding: 30px 20px;
+  text-align: center;
+}
+footer p, footer a { color: #9f7aea; text-shadow: 0 0 6px #9f7aea; }
+footer a:hover { color: #c4b5fd; text-shadow: 0 0 12px #9f7aea; }
+footer .socials a { margin: 0 10px; font-weight: bold; }
+
+/* Scroll to top */
+#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #9f7aea;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 0 10px #c4b5fd;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+}
+#scrollTopBtn.show { opacity: 1; transform: translateY(0); }
+
+/* Responsive */
+@media(max-width:600px){
+  nav a { margin:0 10px; }
+  .about-card { flex-direction: column; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="#home" class="active">Home</a>
+  <a href="#about">About Me</a>
+  <a href="#portfolio">My Video Edits</a>
+  <a href="#featured-video">Featured Video</a>
+</nav>
+
+<!-- Header -->
+<header id="home">
+  <h1>Welcome to My Website</h1>
+  <h2>Mosin | Anime & Video Editor</h2>
+  <p>Crafting high-energy anime edits that bring every scene to life.</p>
+</header>
+
+<!-- About Me -->
+<section id="about">
+  <h2>About Me</h2>
+  <div class="about-card">
+    <img src="mosin_about.png" alt="Mosin Profile Picture">
+    <div class="about-text">
+      <p>Hi! I’m <strong>Mosin</strong>, a dedicated video editor with over <strong>2 years of experience</strong> bringing anime and content to life. I specialize in <span class="glow-text">high-energy anime edits</span>, creating dynamic visuals that capture every epic moment.</p>
+      <p>Beyond anime, I craft <span class="glow-text">gaming videos</span>, <span class="glow-text">vlogs</span>, and <span class="glow-text">long-form YouTube content</span>, combining storytelling with cinematic editing using <span class="glow-text">CapCut</span> and <span class="glow-text">Alight Motion</span>.</p>
+      <div class="skills">
+        <span>Anime Edits</span>
+        <span>CapCut</span>
+        <span>Alight Motion</span>
+        <span>Gaming Videos</span>
+        <span>Vlogs & YouTube</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Portfolio -->
+<section id="portfolio">
+  <h2>My Video Edits</h2>
+  <div class="video-grid">
+    <!-- Video 1 -->
+    <div class="video-card">
+      <a href="https://www.instagram.com/reel/DUCrLmfEfwH/" target="_blank">
+        <img src="gojo1.jpg" alt="Gojo Edit">
+      </a>
+      <div class="video-text">
+        <span class="glow-text floating-text">Gojo Edit – Jujutsu Kaisen</span><br>
+        <span class="glow-text floating-text">Strongest Sorcerer</span><br>
+        <span class="glow-text floating-text">Infinity Technique</span><br>
+        <span class="glow-text floating-text">Unmatched Speed</span>
+      </div>
+    </div>
+
+    <!-- Video 2 -->
+    <div class="video-card">
+      <a href="https://www.instagram.com/reel/DT7p40HkRLb/" target="_blank">
+        <img src="gojo2.jpg" alt="Gojo Edit 2">
+      </a>
+      <div class="video-text">
+        <span class="glow-text floating-text">Gojo Edit – Jujutsu Kaisen</span><br>
+        <span class="glow-text floating-text">Limitless Power</span><br>
+        <span class="glow-text floating-text">Infinite Domain</span><br>
+        <span class="glow-text floating-text">Fearless Fighter</span>
+      </div>
+    </div>
+
+    <!-- Video 3 -->
+    <div class="video-card">
+      <a href="https://www.instagram.com/reel/DUA5TLvkays/" target="_blank">
+        <img src="demon.jpg" alt="Gyutaro Edit">
+      </a>
+      <div class="video-text">
+        <span class="glow-text floating-text">Gyutaro Edit – Demon Slayer</span><br>
+        <span class="glow-text floating-text">Upper Moon Six</span><br>
+        <span class="glow-text floating-text">Poison Master</span><br>
+        <span class="glow-text floating-text">Twin Swords Expert</span>
+      </div>
+    </div>
+
+    <!-- Video 4 -->
+    <div class="video-card">
+      <a href="https://www.instagram.com/reel/DT-INR_kZYs/" target="_blank">
+        <img src="sukuna.jpg" alt="Sukuna Edit">
+      </a>
+      <div class="video-text">
+        <span class="glow-text floating-text">Sukuna Edit – Jujutsu Kaisen</span><br>
+        <span class="glow-text floating-text">King of Curses</span><br>
+        <span class="glow-text floating-text">Cursed Energy Master</span><br>
+        <span class="glow-text floating-text">Fearsome Strength</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured YouTube Video -->
+<section id="featured-video">
+  <h2>Featured Video</h2>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/c33YxIdOyvw?autoplay=1&mute=0&controls=1&loop=1&playlist=c33YxIdOyvw" 
+      title="Featured Anime Edit" 
+      frameborder="0" 
+      allow="autoplay; encrypted-media" 
+      allowfullscreen>
+    </iframe>
+    <div class="video-text">
+      <span class="glow-text floating-text">Aizen – The goat 🐐</span><br>
+      <span class="glow-text floating-text">High Energy Anime Edit</span><br>
+      <span class="glow-text floating-text">Dynamic Effects & Transitions</span><br>
+      <span class="glow-text floating-text">Original Audio Maintained</span>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="socials">
+    <a href="https://www.instagram.com/animeverse_m89" target="_blank">Instagram</a>
+    <a href="https://youtube.com/@animeverse-m89" target="_blank">YouTube</a>
+    <a href="https://github.com/kmosen11-ship-it" target="_blank">GitHub</a>
+  </div>
+  <p>Email: <a href="mailto:kmosen11@gmail.com">kmosen11@gmail.com</a></p>
+  <p>Phone: <a href="tel:7073920700">7073920700</a></p>
+  <p>© 2026 Mosin | Video Editor</p>
+</footer>
+
+<!-- Scroll to top -->
+<button id="scrollTopBtn">&#8679;</button>
+
+<script>
+const sections = document.querySelectorAll('section, header');
+const navLinks = document.querySelectorAll('nav a');
+const scrollBtn = document.getElementById('scrollTopBtn');
+const videoCards = document.querySelectorAll('.video-card');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 150;
+    if(pageYOffset >= sectionTop){current = section.getAttribute('id');}
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if(link.getAttribute('href') === '#' + current){link.classList.add('active');}
+  });
+
+  sections.forEach(sec => {
+    const secTop = sec.getBoundingClientRect().top;
+    if(secTop < window.innerHeight - 100){sec.classList.add('visible');}
+  });
+
+  videoCards.forEach(card => {
+    const cardTop = card.getBoundingClientRect().top;
+    if(cardTop < window.innerHeight - 100){card.classList.add('visible');}
+  });
+
+  if(window.pageYOffset > 300){scrollBtn.classList.add('show');}
+  else{scrollBtn.classList.remove('show');}
+});
+
+scrollBtn.addEventListener('click', ()=>{window.scrollTo({top:0, behavior:'smooth'});});
+</script>
+
+</body>
+</html>
